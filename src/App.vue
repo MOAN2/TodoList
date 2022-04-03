@@ -36,10 +36,16 @@ export default {
   },
   data() {
     return {
-      todos: [],
+      todos:JSON.parse(localStorage.getItem('todos')) || [],
       doings:[],
       dones: [],
     };
+  },
+  beforeMount() {
+    if(this.todos.length){
+      this.doings = this.todos.filter(todo => !todo.completed)
+       this.dones = this.todos.filter(todo =>  todo.completed)
+    }
   },
   methods: {
     getTodo(todoObj) {
@@ -58,7 +64,7 @@ export default {
             //将todo添加到doing中
             this.doings.unshift(todo);
          
-            //删除完成的事项
+            //移动完成的事项
             this.dones = this.todos.filter(todo => todo.completed )
 
             // console.log("取消完成");
@@ -69,7 +75,7 @@ export default {
             //将todo添加到done中
             this.dones.unshift(todo)   
 
-            //删除正在进行的事项
+            //移动正在进行的事项
             this.doings = this.todos.filter(todo => !todo.completed )
 
             // console.log("完成");
@@ -77,18 +83,35 @@ export default {
         } 
       });
     },
+    //删除todo
     delTodo(id){
        this.todos.forEach((todo) => {
             if (todo.id == id) {
                 //如果done为true，则是已完成列表
               if(todo.completed){
                 this.dones = this.dones.filter(todo => todo.id != id)
+                //更新todos
+                this.todos=this.todos.filter(todo => todo.id != id)
+               
               }else{
                  this.doings = this.doings.filter(todo => todo.id != id)
+                 //更新todos
+                 this.todos=this.todos.filter(todo => todo.id != id)
               }
             }
        })     
     }
+  },
+  watch:{
+      todos:{
+        immediate:true,
+        deep:true,
+        handler(value){
+          console.log(value);
+           localStorage.setItem("todos",JSON.stringify(value))
+        }
+      }
+
   }
 };
 </script>

@@ -28,8 +28,7 @@ export default {
       if(confirm('确认删除吗？'))
       {
          this.delTodo(id)
-      }
-     
+      } 
     },
   },
 };
